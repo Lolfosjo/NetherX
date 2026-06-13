@@ -16,9 +16,13 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 ## How to use
 
 **1.** Download the Plugin
+
 **2.** Put it in your plugins folder.
+
 **3.** Restart your Server.
+
 **4.** Use /mw create <worldname> <seed> netherx 
+
 **4. (Without Multiworld)**  Set the generator in your pocketmine.yml:
 
 ```yaml
