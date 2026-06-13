@@ -5,7 +5,7 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 
 ## Features
 
-- **All Nether Biomes**
+- **All Nether Biomes** (Warped Forest, Crimson Forest, Basalt Delta, Soulsand Valley, Nether Wastes)
 
 ##  Todo
 
