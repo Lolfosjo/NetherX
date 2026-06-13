@@ -27,10 +27,8 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 
 ```yaml
 worlds:
- world:
-  generator: vanilla_overworld # sets generator type of the world with folder name "world" to "vanilla_generator"
  nether:
-  generator: vanilla_nether
+  generator: netherx
 ```
   
 ## Screenshots
