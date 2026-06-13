@@ -12,6 +12,21 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 - All Nether Mobs
 - Structures (maybe)
 - Functional Netherportal
+
+## How to use
+
+**1.** Download the Plugin
+**2.** Put it in your plugins folder.
+**3.** Restart your Server.
+**4.** Use /mw create <worldname> <seed> netherx 
+**4. (Without Multiworld)**  Set the generator in your pocketmine.yml:
+```yaml
+worlds:
+ world:
+  generator: vanilla_overworld # sets generator type of the world with folder name "world" to "vanilla_generator"
+ nether:
+  generator: vanilla_nether
+```
   
 ## Screenshots
 
