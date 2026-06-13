@@ -1,21 +1,17 @@
 
 ![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
 
-A PocketMine-MP API 5 plugin that adds a vanilla Nether.
+A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine-MP!
 
 ## Features
 
 - **All Nether Biomes**
-- **Functional Netherportal** (Can be enabled/disabled via config)
-
-
-
-
 
 ##  Todo
 
 - All Nether Mobs
 - Structures (maybe)
+- Functional Netherportal
 ## Screenshots
 
 ![App Screenshot](https://s1.directupload.eu/images/260613/kedvaoyb.png)
