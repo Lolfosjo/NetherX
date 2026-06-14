@@ -75,7 +75,7 @@ class DefaultBiomes
                 ))
                 ->addVegetation(new NetherVegetationPopulator(
                     plant: VanillaBlocks::CRIMSON_ROOTS(),
-                    allowedGround: [VanillaBlocks::WARPED_NYLIUM()],
+                    allowedGround: [VanillaBlocks::CRIMSON_NYLIUM()],
                     attemptsPerChunk: 6,
                     cluster: true,
                     clusterRadius: 4,
