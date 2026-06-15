@@ -19,7 +19,6 @@ use pocketmine\world\format\Chunk;
 class Surface
 {
     public const LAVA_LEVEL = 31;
-    private const NETHER_HEIGHT = 128;
     private const BEDROCK_FLOOR = 0;
     private const BEDROCK_CEIL = 127;
     private const SURFACE_SCAN_DEPTH = 4;
@@ -123,7 +122,7 @@ class Surface
                     $isTop = false;
                     for ($i = 0; $i < $depth; ++$i) {
                         $yy = $y + $i;
-                        if ($yy >= $minY && $yy <= self::BEDROCK_CEIL && ($ids[$yy] ?? $this->airId) === $this->airId) {
+                        if ($yy >= $minY && $yy <= $maxY && ($ids[$yy] ?? $this->airId) === $this->airId) {
                             $isTop = true;
 
                             break;
@@ -133,7 +132,7 @@ class Surface
                     $isCeil = false;
                     for ($i = 0; $i < $depth; ++$i) {
                         $yy = $y - $i;
-                        if ($yy >= $minY && $yy <= self::BEDROCK_CEIL && ($ids[$yy] ?? $this->airId) === $this->airId) {
+                        if ($yy >= $minY && $yy <= $maxY && ($ids[$yy] ?? $this->airId) === $this->airId) {
                             $isCeil = true;
 
                             break;
@@ -200,7 +199,7 @@ class Surface
             }
         }
 
-        if ($isTop || $isCeil) {
+        if ($isTop) {
             $chunk->setBlockStateId($x, $y, $z, $this->blackstoneId);
         }
     }
