@@ -182,7 +182,7 @@ class Surface
         float $patchNoise,
         bool $isTop,
         bool $isCeil,
-        int $above
+        int $above,
     ): void {
         if ($isCeil) {
             $chunk->setBlockStateId($x, $y, $z, $this->basaltId);
@@ -213,7 +213,7 @@ class Surface
         float $nsNoise,
         float $patchNoise,
         bool $isTop,
-        bool $isCeil
+        bool $isCeil,
     ): void {
         if ($isCeil) {
             $chunk->setBlockStateId(
@@ -244,7 +244,7 @@ class Surface
         int $z,
         float $nsNoise,
         float $netherwartNoise,
-        int $above
+        int $above,
     ): void {
         if ($above === $this->airId
             && $y > 31
@@ -266,7 +266,7 @@ class Surface
         int $z,
         float $nsNoise,
         float $netherwartNoise,
-        int $above
+        int $above,
     ): void {
         if ($above === $this->airId
             && $y > 31
@@ -287,7 +287,7 @@ class Surface
         int $y,
         int $z,
         float $soulsandNoise,
-        bool $isTop
+        bool $isTop,
     ): void {
         if (!$isTop) {
             return;

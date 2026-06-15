@@ -52,7 +52,7 @@ class EventListener implements Listener
         $explosion = new Explosion(
             Position::fromObject($bedPos, $world),
             5.0,
-            $player
+            $player,
         );
 
         $explosion->explodeA();

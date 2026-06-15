@@ -19,39 +19,38 @@ use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\Generator;
-use pocketmine\world\generator\InvalidGeneratorOptionsException;
 
 class NetherGenerator extends Generator
 {
     private const NETHER_HEIGHT = 128;
     private const BEDROCK_FLOOR = 0;
-    private const SEED_XOR = 0xDEADBEEF;
+    private const SEED_XOR      = 0xDEADBEEF;
 
     private int $bedrockRoughness = 5;
 
-    private Density $densityGenerator;
-    private Surface $surfaceGenerator;
-    private BiomePicker $biomePicker;
-    private BiomeRegistry $biomeRegistry;
+    private BiomeSizePreset $biomeSizePreset;
+    private Density         $densityGenerator;
+    private Surface         $surfaceGenerator;
+    private BiomePicker     $biomePicker;
+    private BiomeRegistry   $biomeRegistry;
 
-    /** @var Populator[] Run during generateChunk (before neighbours exist). */
+    /** @var Populator[] */
     private array $generationPopulators = [];
 
-    /** @var Populator[] Run during populateChunk (all neighbours generated). */
+    /** @var Populator[] */
     private array $populators = [];
 
-    /**
-     * @throws InvalidGeneratorOptionsException
-     */
     public function __construct(int $seed, string $preset)
     {
         parent::__construct($seed, $preset);
+
+        $this->biomeSizePreset = $this->resolveBiomeSizePreset();
 
         $noiseRand = new Random($this->random->getSeed());
 
         $this->densityGenerator = new Density($noiseRand);
         $this->surfaceGenerator = new Surface($noiseRand, $this->bedrockRoughness);
-        $this->biomePicker = new BiomePicker($this->random);
+        $this->biomePicker      = new BiomePicker($this->random, $this->biomeSizePreset);
 
         $this->biomeRegistry = new BiomeRegistry();
         DefaultBiomes::register($this->biomeRegistry, $this->seed, $this->random);
@@ -64,6 +63,11 @@ class NetherGenerator extends Generator
         $this->addPopulator(new MagmaPopulator());
         $this->addPopulator(new AncientDebrisLargePopulator());
         $this->addPopulator(new AncientDebrisSmallPopulator());
+    }
+
+    protected function resolveBiomeSizePreset(): BiomeSizePreset
+    {
+        return BiomeSizePreset::MEDIUM;
     }
 
     public function getBiomeRegistry(): BiomeRegistry
