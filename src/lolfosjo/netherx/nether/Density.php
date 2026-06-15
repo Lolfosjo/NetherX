@@ -26,7 +26,7 @@ class Density
     protected const DETAIL_NOISE_SCALE_Z = 80.0;
 
     /** Must match Surface::LAVA_LEVEL. Lava fills below this Y during raw terrain generation. */
-    private const LAVA_LEVEL = 32;
+    private const LAVA_LEVEL = 31;
 
     private PerlinOctaveGenerator $octaveHeight;
     private PerlinOctaveGenerator $octaveRoughness;
