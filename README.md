@@ -7,6 +7,7 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 
 - **All Nether biomes included:** Warped Forest, Crimson Forest, Basalt Delta, Soulsand Valley, Nether Wastes
 - **Choose between biome sizes:** small, medium and large (`netherx_small`, `netherx`, `netherx_large`)
+- **NetherX API:** Customize the Nether to your liking with the NetherX API, including support for custom biomes. See the [Custom Biome Example](https://github.com/Lolfosjo/CustomNetherBiomeExample).
 
 ##  Todo
 
