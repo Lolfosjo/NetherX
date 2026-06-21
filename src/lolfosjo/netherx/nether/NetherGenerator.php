@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace lolfosjo\netherx\nether;
 
+use lolfosjo\netherx\nether\biome\BiomeDefinition;
+use lolfosjo\netherx\nether\biome\BiomePicker;
 use lolfosjo\netherx\nether\biome\BiomeRegistry;
+use lolfosjo\netherx\nether\biome\BiomeSizePreset;
 use lolfosjo\netherx\nether\biome\DefaultBiomes;
 use lolfosjo\netherx\nether\populator\AncientDebrisLargePopulator;
 use lolfosjo\netherx\nether\populator\AncientDebrisSmallPopulator;
@@ -15,6 +18,7 @@ use lolfosjo\netherx\nether\populator\NetherGoldOrePopulator;
 use lolfosjo\netherx\nether\populator\NetherGravelPopulator;
 use lolfosjo\netherx\nether\populator\NetherQuartzOrePopulator;
 use lolfosjo\netherx\nether\populator\Populator;
+use lolfosjo\netherx\nether\surface\Surface;
 use pocketmine\utils\Random;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
@@ -24,15 +28,15 @@ class NetherGenerator extends Generator
 {
     private const NETHER_HEIGHT = 128;
     private const BEDROCK_FLOOR = 0;
-    private const SEED_XOR      = 0xDEADBEEF;
+    private const SEED_XOR = 0xDEADBEEF;
 
     private int $bedrockRoughness = 5;
 
     private BiomeSizePreset $biomeSizePreset;
-    private Density         $densityGenerator;
-    private Surface         $surfaceGenerator;
-    private BiomePicker     $biomePicker;
-    private BiomeRegistry   $biomeRegistry;
+    private Density $densityGenerator;
+    private Surface $surfaceGenerator;
+    private BiomePicker $biomePicker;
+    private BiomeRegistry $biomeRegistry;
 
     /** @var Populator[] */
     private array $generationPopulators = [];
@@ -49,11 +53,12 @@ class NetherGenerator extends Generator
         $noiseRand = new Random($this->random->getSeed());
 
         $this->densityGenerator = new Density($noiseRand);
-        $this->surfaceGenerator = new Surface($noiseRand, $this->bedrockRoughness);
-        $this->biomePicker      = new BiomePicker($this->random, $this->biomeSizePreset);
 
         $this->biomeRegistry = new BiomeRegistry();
         DefaultBiomes::register($this->biomeRegistry, $this->seed, $this->random);
+
+        $this->surfaceGenerator = new Surface($noiseRand, $this->bedrockRoughness, $this->biomeRegistry);
+        $this->biomePicker = new BiomePicker($this->random, $this->biomeSizePreset, $this->biomeRegistry);
 
         $this->addPopulator(new NetherQuartzOrePopulator());
         $this->addPopulator(new NetherGoldOrePopulator());
@@ -65,9 +70,9 @@ class NetherGenerator extends Generator
         $this->addPopulator(new AncientDebrisSmallPopulator());
     }
 
-    protected function resolveBiomeSizePreset(): BiomeSizePreset
+    public function registerBiome(int $biomeId, BiomeDefinition $definition): void
     {
-        return BiomeSizePreset::MEDIUM;
+        $this->biomeRegistry->register($biomeId, $definition);
     }
 
     public function getBiomeRegistry(): BiomeRegistry
@@ -86,6 +91,7 @@ class NetherGenerator extends Generator
         $this->surfaceGenerator = new Surface(
             new Random($this->random->getSeed()),
             $roughness,
+            $this->biomeRegistry,
         );
     }
 
@@ -124,6 +130,11 @@ class NetherGenerator extends Generator
         }
 
         $this->applyVegetationPopulators($world, $chunkX, $chunkZ);
+    }
+
+    protected function resolveBiomeSizePreset(): BiomeSizePreset
+    {
+        return BiomeSizePreset::MEDIUM;
     }
 
     private function applyVegetationPopulators(ChunkManager $world, int $chunkX, int $chunkZ): void

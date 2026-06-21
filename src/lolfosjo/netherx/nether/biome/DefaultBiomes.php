@@ -13,6 +13,11 @@ use lolfosjo\netherx\nether\populator\GlowstonePopulator;
 use lolfosjo\netherx\nether\populator\NetherVegetationPopulator;
 use lolfosjo\netherx\nether\populator\warped\HugeWarpedFungusPopulator;
 use lolfosjo\netherx\nether\populator\warped\WarpedTwistingVinesPopulator;
+use lolfosjo\netherx\nether\surface\BasaltDeltasSurfaceRule;
+use lolfosjo\netherx\nether\surface\CrimsonForestSurfaceRule;
+use lolfosjo\netherx\nether\surface\HellSurfaceRule;
+use lolfosjo\netherx\nether\surface\SoulsandValleySurfaceRule;
+use lolfosjo\netherx\nether\surface\WarpedForestSurfaceRule;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\utils\Random;
@@ -22,9 +27,8 @@ class DefaultBiomes
     public static function register(BiomeRegistry $registry, int $seed, Random $random): void
     {
         // TODO: rebalance these values (currently non-vanilla tuning)
-        $randomHeight = $random->nextBoundedInt(6) + 7;  // range [7, 12]
-        $randomCluster = $random->nextBoundedInt(5) + 1;  // range [1, 5]
-
+        $randomHeight = $random->nextBoundedInt(6) + 7;
+        $randomCluster = $random->nextBoundedInt(5) + 1;
         $glowstone = new GlowstonePopulator(
             minClusterSize: 40,
             maxClusterSize: 60,
@@ -34,6 +38,8 @@ class DefaultBiomes
         $registry->register(
             BiomeIds::HELL,
             BiomeDefinition::builder()
+                ->withClimate(temperature: 0.0, humidity: 0.0, offset: 0.0)
+                ->withSurfaceRule(new HellSurfaceRule())
                 ->addVegetation($glowstone)
                 ->addVegetation(new NetherVegetationPopulator(
                     plant: VanillaBlocks::FIRE(),
@@ -46,6 +52,8 @@ class DefaultBiomes
         $registry->register(
             BiomeIds::SOULSAND_VALLEY,
             BiomeDefinition::builder()
+                ->withClimate(temperature: 0.0, humidity: -0.5, offset: 0.0)
+                ->withSurfaceRule(new SoulsandValleySurfaceRule())
                 ->addVegetation($glowstone)
                 ->addVegetation(new NetherVegetationPopulator(
                     plant: VanillaBlocks::SOUL_FIRE(),
@@ -58,6 +66,8 @@ class DefaultBiomes
         $registry->register(
             BiomeIds::CRIMSON_FOREST,
             BiomeDefinition::builder()
+                ->withClimate(temperature: 0.4, humidity: 0.0, offset: 0.0)
+                ->withSurfaceRule(new CrimsonForestSurfaceRule())
                 ->addVegetation(new HugeCrimsonFungusPopulator(
                     treeHeight: $randomHeight,
                 ))
@@ -87,6 +97,8 @@ class DefaultBiomes
         $registry->register(
             BiomeIds::WARPED_FOREST,
             BiomeDefinition::builder()
+                ->withClimate(temperature: 0.0, humidity: 0.5, offset: 0.375)
+                ->withSurfaceRule(new WarpedForestSurfaceRule())
                 ->addVegetation(new WarpedTwistingVinesPopulator())
                 ->addVegetation(new HugeWarpedFungusPopulator(
                     treeHeight: $randomHeight,
@@ -126,6 +138,8 @@ class DefaultBiomes
         $registry->register(
             BiomeIds::BASALT_DELTAS,
             BiomeDefinition::builder()
+                ->withClimate(temperature: -0.5, humidity: 0.0, offset: 0.175)
+                ->withSurfaceRule(new BasaltDeltasSurfaceRule())
                 ->addVegetation(new BasaltDeltaMagmaPopulator())
                 ->addVegetation(new BasaltDeltaPillarPopulator())
                 ->addVegetation(new BasaltDeltaLavaPopulator($seed))

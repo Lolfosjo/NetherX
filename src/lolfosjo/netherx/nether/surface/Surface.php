@@ -7,8 +7,9 @@
 
 declare(strict_types=1);
 
-namespace lolfosjo\netherx\nether;
+namespace lolfosjo\netherx\nether\surface;
 
+use lolfosjo\netherx\nether\biome\BiomeRegistry;
 use lolfosjo\netherx\noise\bukkit\SimplexOctaveGenerator;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\BiomeIds;
@@ -31,15 +32,6 @@ class Surface
     private int $bedrockId;
     private int $netherrackId;
     private int $airId;
-    private int $basaltId;
-    private int $blackstoneId;
-    private int $gravelId;
-    private int $soulSandId;
-    private int $soulSoilId;
-    private int $warpedWartBlockId;
-    private int $warpedNyliumId;
-    private int $netherWartBlockId;
-    private int $crimsonNyliumId;
 
     private SimplexOctaveGenerator $netherStateNoise;
     private SimplexOctaveGenerator $patchNoise;
@@ -47,23 +39,16 @@ class Surface
     private SimplexOctaveGenerator $netherwartNoise;
 
     private int $bedrockRoughness;
+    private BiomeRegistry $biomeRegistry;
 
-    public function __construct(Random $noiseRand, int $bedrockRoughness = 5)
+    public function __construct(Random $noiseRand, int $bedrockRoughness, BiomeRegistry $biomeRegistry)
     {
         $this->bedrockId = VanillaBlocks::BEDROCK()->getStateId();
         $this->netherrackId = VanillaBlocks::NETHERRACK()->getStateId();
         $this->airId = VanillaBlocks::AIR()->getStateId();
-        $this->basaltId = VanillaBlocks::BASALT()->getStateId();
-        $this->blackstoneId = VanillaBlocks::BLACKSTONE()->getStateId();
-        $this->gravelId = VanillaBlocks::GRAVEL()->getStateId();
-        $this->soulSandId = VanillaBlocks::SOUL_SAND()->getStateId();
-        $this->soulSoilId = VanillaBlocks::SOUL_SOIL()->getStateId();
-        $this->warpedWartBlockId = VanillaBlocks::WARPED_WART_BLOCK()->getStateId();
-        $this->warpedNyliumId = VanillaBlocks::WARPED_NYLIUM()->getStateId();
-        $this->netherWartBlockId = VanillaBlocks::NETHER_WART_BLOCK()->getStateId();
-        $this->crimsonNyliumId = VanillaBlocks::CRIMSON_NYLIUM()->getStateId();
 
         $this->bedrockRoughness = $bedrockRoughness;
+        $this->biomeRegistry = $biomeRegistry;
 
         $baseSeed = $noiseRand->getSeed();
 
@@ -101,6 +86,12 @@ class Surface
         for ($x = 0; $x < Chunk::EDGE_LENGTH; ++$x) {
             for ($z = 0; $z < Chunk::EDGE_LENGTH; ++$z) {
                 $biomeId = $biomeMap[$x][$z] ?? BiomeIds::HELL;
+
+                $surfaceRule = $this->biomeRegistry->get($biomeId)->getSurfaceRule();
+                if (null === $surfaceRule) {
+                    continue;
+                }
+
                 $nx = $x + $baseX;
                 $nz = $z + $baseZ;
 
@@ -140,166 +131,22 @@ class Surface
                     }
 
                     $above = $ids[$y + 1] ?? $this->airId;
+                    $below = $ids[$y - 1] ?? $this->airId;
 
-                    switch ($biomeId) {
-                        case BiomeIds::BASALT_DELTAS:
-                            $this->applyBasaltDeltas($chunk, $x, $y, $z, $nsNoise, $patchN, $isTop, $isCeil, $above);
+                    $context = new SurfaceContext(
+                        stateNoise: $nsNoise,
+                        patchNoise: $patchN,
+                        soulsandNoise: $soulsandN,
+                        netherwartNoise: $netherwartN,
+                        isTop: $isTop,
+                        isCeil: $isCeil,
+                        above: $above,
+                        below: $below,
+                    );
 
-                            break;
-
-                        case BiomeIds::SOULSAND_VALLEY:
-                            $this->applySoulsandValley($chunk, $x, $y, $z, $nsNoise, $patchN, $isTop, $isCeil);
-
-                            break;
-
-                        case BiomeIds::WARPED_FOREST:
-                            $this->applyWarpedForest($chunk, $x, $y, $z, $nsNoise, $netherwartN, $above);
-
-                            break;
-
-                        case BiomeIds::CRIMSON_FOREST:
-                            $this->applyCrimsonForest($chunk, $x, $y, $z, $nsNoise, $netherwartN, $above);
-
-                            break;
-
-                        case BiomeIds::HELL:
-                            $this->applyHell($chunk, $x, $y, $z, $soulsandN, $isTop);
-
-                            break;
-                    }
+                    $surfaceRule->apply($chunk, $x, $y, $z, $context);
                 }
             }
-        }
-    }
-
-    private function applyBasaltDeltas(
-        Chunk $chunk,
-        int $x,
-        int $y,
-        int $z,
-        float $nsNoise,
-        float $patchNoise,
-        bool $isTop,
-        bool $isCeil,
-        int $above,
-    ): void {
-        if ($isCeil) {
-            $chunk->setBlockStateId($x, $y, $z, $this->basaltId);
-
-            return;
-        }
-
-        if ($above === $this->airId) {
-            if ($nsNoise >= 0
-                || ($y <= 35 && $y >= 30 && $patchNoise >= -0.012)
-            ) {
-                $chunk->setBlockStateId($x, $y, $z, $this->gravelId);
-
-                return;
-            }
-        }
-
-        if ($isTop) {
-            $chunk->setBlockStateId($x, $y, $z, $this->blackstoneId);
-        }
-    }
-
-    private function applySoulsandValley(
-        Chunk $chunk,
-        int $x,
-        int $y,
-        int $z,
-        float $nsNoise,
-        float $patchNoise,
-        bool $isTop,
-        bool $isCeil,
-    ): void {
-        if ($isCeil) {
-            $chunk->setBlockStateId(
-                $x,
-                $y,
-                $z,
-                $nsNoise >= 0 ? $this->soulSandId : $this->soulSoilId,
-            );
-
-            return;
-        }
-
-        if ($isTop) {
-            if ($nsNoise >= 0
-                || ($y <= 35 && $y >= 30 && $patchNoise >= -0.012)
-            ) {
-                $chunk->setBlockStateId($x, $y, $z, $this->soulSandId);
-            } else {
-                $chunk->setBlockStateId($x, $y, $z, $this->soulSoilId);
-            }
-        }
-    }
-
-    private function applyWarpedForest(
-        Chunk $chunk,
-        int $x,
-        int $y,
-        int $z,
-        float $nsNoise,
-        float $netherwartNoise,
-        int $above,
-    ): void {
-        if ($above === $this->airId
-            && $y > 31
-            && $nsNoise <= 0.28
-        ) {
-            $chunk->setBlockStateId(
-                $x,
-                $y,
-                $z,
-                $netherwartNoise >= 1.17 ? $this->warpedWartBlockId : $this->warpedNyliumId,
-            );
-        }
-    }
-
-    private function applyCrimsonForest(
-        Chunk $chunk,
-        int $x,
-        int $y,
-        int $z,
-        float $nsNoise,
-        float $netherwartNoise,
-        int $above,
-    ): void {
-        if ($above === $this->airId
-            && $y > 31
-            && $nsNoise <= 0.54
-        ) {
-            $chunk->setBlockStateId(
-                $x,
-                $y,
-                $z,
-                $netherwartNoise >= 1.17 ? $this->netherWartBlockId : $this->crimsonNyliumId,
-            );
-        }
-    }
-
-    private function applyHell(
-        Chunk $chunk,
-        int $x,
-        int $y,
-        int $z,
-        float $soulsandNoise,
-        bool $isTop,
-    ): void {
-        if (!$isTop) {
-            return;
-        }
-
-        if ($y > 31 && $y < 35 && $soulsandNoise >= -0.012) {
-            $chunk->setBlockStateId($x, $y, $z, $this->gravelId);
-
-            return;
-        }
-
-        if ($y <= 35 && $y >= 30 && $soulsandNoise >= -0.012) {
-            $chunk->setBlockStateId($x, $y, $z, $this->soulSandId);
         }
     }
 
