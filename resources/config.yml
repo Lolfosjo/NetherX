@@ -1,0 +1,7 @@
+# NetherX Configuration
+
+# true = Bed explosions enabled, false = Bed explosions disabled
+bed-explosion: true
+
+# true = Water cannot be placed in the Nether, false = Water can be placed in the Nether
+block-water-placement: true

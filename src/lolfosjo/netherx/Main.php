@@ -24,6 +24,16 @@ final class Main extends PluginBase
 
     public function onEnable(): void
     {
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
+        $this->saveDefaultConfig();
+        $this->reloadConfig();
+
+        $config = $this->getConfig();
+        $bedExplosionEnabled = (bool) $config->get('bed-explosion', true);
+        $blockWaterPlacement = (bool) $config->get('block-water-placement', true);
+
+        $this->getServer()->getPluginManager()->registerEvents(
+            new EventListener($bedExplosionEnabled, $blockWaterPlacement),
+            $this,
+        );
     }
 }
