@@ -11,8 +11,8 @@ A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine
 
 ##  Todo
 
-- All Nether Mobs
-- Structures (maybe)
+- Add structures (maybe)
+- Implement more API features
 - Functional Netherportal
 
 ## How to use
