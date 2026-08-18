@@ -1,7 +1,7 @@
 
 ![Logo](https://github.com/Lolfosjo/NetherX/blob/main/NetherX_Logo.jpg?raw=true)
 
-A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to PocketMine-MP!
+A PocketMine-MP API 5 plugin that brings the Minecraft 1.16 Nether to Altay, and Axolotl-PM!
 
 ## Features
 
