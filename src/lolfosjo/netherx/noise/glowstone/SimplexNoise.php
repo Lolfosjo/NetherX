@@ -331,16 +331,3 @@ class SimplexNoise extends PerlinNoise
         return 32.0 * ($n0 + $n1 + $n2 + $n3);
     }
 }
-
-// Inner class to speed up gradient computations
-// (array access is a lot slower than member access)
-final class Grad
-{
-    public function __construct(
-        public float $x,
-        public float $y,
-        public float $z,
-    ) {}
-}
-
-SimplexNoise::init();

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace lolfosjo\netherx;
 
+use bStats\PocketmineMp\Metrics;
 use lolfosjo\netherx\listener\EventListener;
-use lolfosjo\netherx\nether\NetherGenerator;
-use lolfosjo\netherx\nether\variant\NetherGeneratorLarge;
-use lolfosjo\netherx\nether\variant\NetherGeneratorSmall;
+use lolfosjo\netherx\generator\NetherGenerator;
+use lolfosjo\netherx\generator\variant\NetherGeneratorLarge;
+use lolfosjo\netherx\generator\variant\NetherGeneratorSmall;
+use lolfosjo\netherx\noise\glowstone\SimplexNoise;
 use pocketmine\plugin\PluginBase;
 use pocketmine\world\generator\GeneratorManager;
 
@@ -24,6 +26,7 @@ final class Main extends PluginBase
 
     public function onEnable(): void
     {
+        $this->registerMetrics();
         $this->saveDefaultConfig();
         $this->reloadConfig();
 
@@ -31,9 +34,15 @@ final class Main extends PluginBase
         $bedExplosionEnabled = (bool) $config->get('bed-explosion', true);
         $blockWaterPlacement = (bool) $config->get('block-water-placement', true);
 
+        SimplexNoise::init();
+
         $this->getServer()->getPluginManager()->registerEvents(
             new EventListener($bedExplosionEnabled, $blockWaterPlacement),
             $this,
         );
     }
+
+   	private function registerMetrics() : void {
+		$metrics = new Metrics($this, 33686);
+	}
 }

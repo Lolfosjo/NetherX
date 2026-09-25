@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace lolfosjo\netherx\listener;
 
-use lolfosjo\netherx\nether\NetherGenerator;
+use lolfosjo\netherx\generator\NetherGenerator;
 use pocketmine\block\Bed;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\block\Water;
@@ -15,6 +15,7 @@ use pocketmine\world\Explosion;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use pocketmine\network\mcpe\protocol\types\DimensionIds;
 
 class EventListener implements Listener
 {
@@ -97,4 +98,8 @@ class EventListener implements Listener
 
         return $generatorName === $registeredName;
     }
+
+   	private function isNether(World $world) : bool{
+		return $this->dimensions->getDimension($world) === DimensionIds::NETHER;
+	}
 }
