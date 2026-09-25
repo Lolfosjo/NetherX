@@ -2,6 +2,7 @@
     "name": "lolfosjo/netherx",
     "description": "Plugin for PocketMine-MP that adds the vanilla Minecraft 1.16 Nether.",
     "type": "project",
+    "license": "MIT",
     "require": {
         "bstats/pocketmine-mp": "^1.0.0"
     },
